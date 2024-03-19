@@ -1,3 +1,6 @@
+1.2.12 (2024-03-18)
+    - Add logging and better connection error handling
+
 1.2.11 (2024-03-11)
     - Add a message receive buffer to avoid issues when receiving large messages
 
