@@ -106,7 +106,7 @@ def import_sheet(groupname, sheet, modelsets):
         row = row[:max_model_column]
 
         # Remove whitespace from all fields
-        row = [unicode(s).strip() if s else s for s in row]
+        row = [str(s).strip() if s else s for s in row]
 
         #print row
 
@@ -166,9 +166,9 @@ def import_sheet(groupname, sheet, modelsets):
                 range = value
             else:
                 # Parse the value - sometimes ranges are given, split those first
-                range = re.split(ur'(?<=[\u201c\u201d"”“])-(?=[\u201c\u201d"”“])', value)
+                range = re.split(r'(?<=[\u201c\u201d"”“])-(?=[\u201c\u201d"”“])', value)
                 # Then, remove the quotes
-                validate = lambda s: re.match(ur'^[\u201c\u201d”"”“](.*?)["”]$', s)
+                validate = lambda s: re.match(r'^[\u201c\u201d”"”“](.*?)["”]$', s)
 
                 range = [validate(r).groups()[0] for r in range]
 
@@ -210,7 +210,7 @@ def import_sheet(groupname, sheet, modelsets):
                 if not s:
                     return False
 
-                m = re.match(r'(Yes|No)(?:\(\*\))?', c)
+                m = re.match(r'(Yes|No)(?:\(\*\))?', s)
                 if not m:
                     # Sometimes it doesn't say Yes or No, but as string
                     # such as RS232C. It seems that this notes always
