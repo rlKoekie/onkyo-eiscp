@@ -17,3 +17,8 @@ class TestCommandToIscp(TestCase):
 
     def test_argument_aliases(self):
         self.assertEqual('PWR00', command_to_iscp('main.system-power=off'))
+
+    def test_argument_with_space(self):
+        self.assertEqual('NTCTRUP', command_to_iscp('network-usb', 'trup', 'dock'))
+        self.assertEqual('NTCTRUP', command_to_iscp('dock.network-usb=trup'))
+        self.assertEqual('NTCTRUP', command_to_iscp('dock.network-usb trup'))
