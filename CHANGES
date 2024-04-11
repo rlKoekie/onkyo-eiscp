@@ -1,3 +1,6 @@
+1.2.13 (2024-04-10)
+    - Add fix for argument parsing
+
 1.2.12 (2024-03-18)
     - Add logging and better connection error handling
 
