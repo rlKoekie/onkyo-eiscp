@@ -5,6 +5,7 @@ Usage:
   %(prog_n_space)s [--all] [--name <name>] [--id <identifier>]
   %(prog_n_space)s [--verbose | -v]... [--quiet | -q]... <command>...
   %(program_name)s --discover
+  %(program_name)s [--host <host>] [--group_with <otherhost> ...] 
   %(program_name)s --help-commands [<zone> <command>]
   %(program_name)s -h | --help
 
@@ -31,6 +32,11 @@ Examples:
     Turn receiver on, select "PC" source, set volume to 75.
   %(program_name)s zone2.power=standby
     To execute a command for zone that isn't the main one.
+  %(program_name)s --host 192.168.1.15 --group_with "0009B0E4B723" "0009B0E4B724"
+    Setup multiroom audio using Flareconnect. The <host> receiver is source, all receiver IDs supplied for <otherhost> join the <host> in a Flareconnect group.
+    Use the --discover option to get the receiver IDs.
+  %(program_name)s --host 192.168.1.15 --group_with
+    Stop the multiroom audio group / flareconnect.
 '''
 
 import sys
@@ -111,6 +117,9 @@ def main(argv=sys.argv):
         if not receivers:
             print('No receivers found.')
             return 1
+
+    if options['--group_with']:
+        receivers[0].group_with(options['<otherhost>'])
 
     # List of commands to execute - deal with special shortcut case
     to_execute = options['<command>']

@@ -279,6 +279,9 @@ def filter_for_message(getter_func, msg):
         # It seems ISCP commands are always three characters.
         if candidate and candidate[:3] == msg[:3]:
             return candidate
+        elif candidate and candidate[:3] == 'MDI' and msg[:3] == 'MGS':
+            # the MGS command for grouping multiroom audio, returns an MDI message, not MGS
+            return candidate
 
         # exception for HDMI-CEC commands (CTV) since they don't provide any response/confirmation
         if "CTV" in msg[:3]:
@@ -619,6 +622,25 @@ class eISCP(object):
     def power_off(self):
         """Turn the receiver power off."""
         return self.command('power', 'off')
+
+    def group_with(self, otherIDs=[]):
+        """Create a multiroom audio / flareconnect group with the supplied device IDs.
+        Calling this without arguments or an empty list stops the multiroom audio / flareconnect group.
+        Calling this method twice with the same arguments does not generate a response from the receiver, thus causing a timeout on the message."""
+        if otherIDs:
+            # check if the supplied deviceIDs are all strings
+            for ID in otherIDs:
+                if type(ID) != str:
+                    raise ValueError('group_with needs a list object, with each device identifier as a string')
+            # construct a MGS message with a list of the device IDs
+            message='MGS<mgs zone="1"><groupid>1</groupid><maxdelay>500</maxdelay><devices>' + \
+                '<device id="%s" zoneid="1"/>'%(self.identifier) + \
+                ''.join(['<device id="%s" zoneid="1"/>'%(ID) for ID in otherIDs]) + \
+                '</devices></mgs>'
+        else:
+            # No other devices specified. Create an empty group, which stops the multiroom audio / flareconnect
+            message='MGS<mgs zone="1"><groupid>0</groupid></mgs>'
+        return self.raw(message)
 
     def get_nri(self):
         """Return NRI info as dict."""
